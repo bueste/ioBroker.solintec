@@ -30,6 +30,7 @@
         "test:unit": "mocha test/unit --exit",
         "test:package": "mocha test/package --exit",
         "test": "npm run test:unit && npm run test:package",
+        "test:integration": "mocha test/integration --exit",
         "lint": "eslint .",
         "translate": "translate-adapter",
         "release": "release-script"
