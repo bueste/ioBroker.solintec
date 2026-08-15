@@ -1,0 +1,9 @@
+node_modules/
+npm-debug.log
+.idea/
+*.iml
+*.suo
+tmp/
+.vscode/*
+!.vscode/settings.json
+.DS_Store

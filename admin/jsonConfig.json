@@ -1,0 +1,129 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_connection": {
+            "type": "panel",
+            "label": "connectionTab",
+            "items": {
+                "_hintConnection": {
+                    "type": "staticText",
+                    "text": "hintConnectionText",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "host": {
+                    "type": "text",
+                    "label": "host",
+                    "help": "hostHelp",
+                    "newLine": true,
+                    "trim": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "port": {
+                    "type": "number",
+                    "label": "port",
+                    "help": "portHelp",
+                    "min": 1,
+                    "max": 65535,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 2,
+                    "lg": 2,
+                    "xl": 2
+                },
+                "unitId": {
+                    "type": "number",
+                    "label": "unitId",
+                    "help": "unitIdHelp",
+                    "min": 1,
+                    "max": 247,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 2,
+                    "lg": 2,
+                    "xl": 2
+                },
+                "requestTimeout": {
+                    "type": "number",
+                    "label": "requestTimeout",
+                    "help": "requestTimeoutHelp",
+                    "min": 1,
+                    "max": 60,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        },
+        "_polling": {
+            "type": "panel",
+            "label": "pollingTab",
+            "items": {
+                "fastPollInterval": {
+                    "type": "number",
+                    "label": "fastPollInterval",
+                    "help": "fastPollIntervalHelp",
+                    "min": 3,
+                    "max": 300,
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "slowPollInterval": {
+                    "type": "number",
+                    "label": "slowPollInterval",
+                    "help": "slowPollIntervalHelp",
+                    "min": 5,
+                    "max": 3600,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 3,
+                    "lg": 3,
+                    "xl": 3
+                }
+            }
+        },
+        "_ems": {
+            "type": "panel",
+            "label": "emsTab",
+            "items": {
+                "_hintEms": {
+                    "type": "staticText",
+                    "text": "hintEmsText",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "enableEmsControl": {
+                    "type": "checkbox",
+                    "label": "enableEmsControl",
+                    "help": "enableEmsControlHelp",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 6,
+                    "lg": 6,
+                    "xl": 6
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "connectionTab": "Verbindung",
+    "hintConnectionText": "Lokale Modbus-TCP-Verbindung zum Solinteg-Wechselrichter konfigurieren. Kein Cloud-Konto oder Internetzugang nötig.",
+    "host": "Host / IP-Adresse",
+    "hostHelp": "IP-Adresse oder Hostname des Solinteg-Wechselrichters (bzw. Modbus TCP/RTU-Gateways).",
+    "port": "Port",
+    "portHelp": "Modbus-TCP-Port, üblicherweise 502.",
+    "unitId": "Unit ID",
+    "unitIdHelp": "Modbus-Slave-/Unit-ID des Wechselrichters, üblicherweise 1.",
+    "requestTimeout": "Timeout pro Anfrage (s)",
+    "requestTimeoutHelp": "Timeout für eine einzelne Modbus-Anfrage, in Sekunden.",
+    "pollingTab": "Abfrage-Intervalle",
+    "fastPollInterval": "Schnelles Poll-Intervall (s)",
+    "fastPollIntervalHelp": "Wie oft Leistungswerte (PV, Netz, Batterie) gelesen werden.",
+    "slowPollInterval": "Langsames Poll-Intervall (s)",
+    "slowPollIntervalHelp": "Wie oft Energiezähler und Diagnosewerte gelesen werden.",
+    "emsTab": "EMS-Steuerung",
+    "hintEmsText": "EMS-Schreibzugriff erlaubt diesem Adapter, Betriebsmodus, Lade-/Entladeleistung und Limits des Wechselrichters zu ändern. Nur aktivieren, wenn du aktiv steuern willst - gelesen werden alle Werte auch ohne Aktivierung.",
+    "enableEmsControl": "EMS-Schreibzugriff aktivieren",
+    "enableEmsControlHelp": "Solange deaktiviert (Standard), sind alle EMS-States nur lesbar und Schreibversuche werden ignoriert."
+}

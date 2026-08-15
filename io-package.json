@@ -1,0 +1,126 @@
+{
+    "common": {
+        "name": "solintec",
+        "version": "0.1.0",
+        "news": {
+            "0.1.0": {
+                "en": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter (with Dyness STACK100 battery attached via CAN/RS485) over local Modbus TCP. Optional EMS write access (charge/discharge power, working mode, limits) is disabled by default and must be explicitly enabled in the instance configuration.",
+                "de": "Erstveröffentlichung: liest PV-, Netz-/Zähler- und Batteriewerte eines Solinteg MHT-25~50K-100 Hybrid-Wechselrichters (mit Dyness STACK100 Akku über CAN/RS485) via lokalem Modbus TCP. Optionaler EMS-Schreibzugriff (Lade-/Entladeleistung, Betriebsmodus, Limits) ist standardmäßig deaktiviert und muss in der Instanzkonfiguration explizit aktiviert werden.",
+                "ru": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "pt": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "nl": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "fr": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "it": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "es": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "pl": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "zh-cn": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP.",
+                "uk": "Initial release: reads PV, grid/meter, and battery values from a Solinteg MHT-25~50K-100 hybrid inverter over local Modbus TCP."
+            }
+        },
+        "titleLang": {
+            "en": "Solinteg MHT / Dyness STACK100",
+            "de": "Solinteg MHT / Dyness STACK100",
+            "ru": "Solinteg MHT / Dyness STACK100",
+            "pt": "Solinteg MHT / Dyness STACK100",
+            "nl": "Solinteg MHT / Dyness STACK100",
+            "fr": "Solinteg MHT / Dyness STACK100",
+            "it": "Solinteg MHT / Dyness STACK100",
+            "es": "Solinteg MHT / Dyness STACK100",
+            "pl": "Solinteg MHT / Dyness STACK100",
+            "uk": "Solinteg MHT / Dyness STACK100",
+            "zh-cn": "Solinteg MHT / Dyness STACK100"
+        },
+        "desc": {
+            "en": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP - no cloud required.",
+            "de": "Liest PV-, Netz-/Zähler- und Batteriedaten eines Solinteg MHT-25~50K-100 Hybrid-Wechselrichters mit Dyness STACK100 Akku über lokales Modbus TCP - ohne Cloud-Zwang.",
+            "ru": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "pt": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "nl": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "fr": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "it": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "es": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "pl": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "zh-cn": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP.",
+            "uk": "Reads PV, grid/meter and battery data from a Solinteg MHT-25~50K-100 hybrid inverter with Dyness STACK100 battery via local Modbus TCP."
+        },
+        "authors": ["Stefan Bühler"],
+        "keywords": ["solinteg", "dyness", "mht", "stack100", "modbus", "inverter", "solar", "battery", "pv"],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "solintec.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/bueste/ioBroker.solintec/main/admin/solintec.png",
+        "readme": "https://github.com/bueste/ioBroker.solintec/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "energy",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [{ "js-controller": ">=6.0.11" }],
+        "globalDependencies": [{ "admin": ">=7.6.20" }]
+    },
+    "native": {
+        "host": "",
+        "port": 502,
+        "unitId": 1,
+        "requestTimeout": 5,
+        "fastPollInterval": 5,
+        "slowPollInterval": 30,
+        "enableEmsControl": false
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": { "name": "Information" },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Inverter reachable",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.lastSuccess",
+            "type": "state",
+            "common": {
+                "role": "value.time",
+                "name": "Timestamp of last successful poll",
+                "type": "number",
+                "read": true,
+                "write": false,
+                "def": 0
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.lastError",
+            "type": "state",
+            "common": {
+                "role": "text",
+                "name": "Last error message",
+                "type": "string",
+                "read": true,
+                "write": false,
+                "def": ""
+            },
+            "native": {}
+        }
+    ]
+}

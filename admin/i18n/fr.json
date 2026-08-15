@@ -1,0 +1,21 @@
+{
+    "connectionTab": "Connection",
+    "hintConnectionText": "Configure the local Modbus TCP connection to the Solinteg inverter. No cloud account or internet access is required.",
+    "host": "Host / IP address",
+    "hostHelp": "IP address or hostname of the Solinteg inverter (or Modbus TCP/RTU gateway).",
+    "port": "Port",
+    "portHelp": "Modbus TCP port, usually 502.",
+    "unitId": "Unit ID",
+    "unitIdHelp": "Modbus slave/unit ID of the inverter, usually 1.",
+    "requestTimeout": "Request timeout (s)",
+    "requestTimeoutHelp": "Timeout for a single Modbus request, in seconds.",
+    "pollingTab": "Polling",
+    "fastPollInterval": "Fast poll interval (s)",
+    "fastPollIntervalHelp": "How often power/flow values (PV, grid, battery) are read.",
+    "slowPollInterval": "Slow poll interval (s)",
+    "slowPollIntervalHelp": "How often energy counters and diagnostics are read.",
+    "emsTab": "EMS control",
+    "hintEmsText": "EMS write access lets this adapter change the inverter's working mode, charge/discharge power and limits. Leave this disabled unless you actively want to control the inverter/battery - all values are still read even when disabled.",
+    "enableEmsControl": "Enable EMS write access",
+    "enableEmsControlHelp": "When disabled (default), all EMS-related states are read-only and writes are ignored."
+}

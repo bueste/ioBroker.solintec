@@ -1,0 +1,160 @@
+![Logo](admin/solintec.png)
+
+# ioBroker.solintec
+
+[![NPM version](https://img.shields.io/npm/v/iobroker.solintec.svg)](https://www.npmjs.com/package/iobroker.solintec)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.solintec.svg)](https://www.npmjs.com/package/iobroker.solintec)
+![Test and Release](https://github.com/bueste/ioBroker.solintec/actions/workflows/test-and-release.yml/badge.svg)
+
+Reads PV, grid/meter and battery data from a **Solinteg MHT-25~50K-100** hybrid inverter (25-50 kW, three-phase) with a **Dyness STACK100** battery (51.2 kWh, connected to the inverter via CAN/RS485) over **local Modbus TCP**. No cloud account, no internet access required.
+
+## Table of contents
+
+- [Why this adapter?](#why-this-adapter)
+- [Register source and limitations (please read)](#register-source-and-limitations-please-read)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Object/state structure](#objectstate-structure)
+- [EMS write access (controlling the inverter/battery)](#ems-write-access-controlling-the-inverterbattery)
+- [Polling and efficient reads](#polling-and-efficient-reads)
+- [Security & privacy](#security--privacy)
+- [Development](#development)
+- [Changelog](#changelog)
+- [License](#license)
+
+## Why this adapter?
+
+There is no generic "Solinteg" support in ioBroker. The Solinteg WR speaks openly documented Modbus TCP, so it could in principle be read out with the generic `ioBroker.modbus` adapter and a manually entered register list - but that means re-entering 50+ registers by hand in the admin UI, with no code-level control over scaling, data types or object structure. This adapter instead talks Modbus TCP directly (via `modbus-serial`), the same way [ioBroker.zeptrion](https://github.com/bueste/ioBroker.zeptrion), [ioBroker.goodwe-sems](https://github.com/bueste/ioBroker.goodwe-sems) and [ioBroker.husqvarna-automower-connect](https://github.com/bueste/ioBroker.husqvarna-automower-connect) each talk directly to their respective device/cloud API, giving full control over register mapping, scaling and the resulting object tree - plus the option to actively control the inverter/battery (EMS write access, off by default).
+
+## Register source and limitations (please read)
+
+Register addresses in [`lib/registers.js`](lib/registers.js) are sourced from the official Solinteg Modbus TCP protocol documentation, cross-checked against [`wills106/homeassistant-solax-modbus`](https://github.com/wills106/homeassistant-solax-modbus) (`custom_components/solax_modbus/plugin_solinteg.py`), which documents the identical INTEG-M register family also used by Wattsonic and M-TEC Energy Butler rebrands.
+
+**These addresses have not yet been verified against real hardware.** Before relying on this adapter, check the first poll's results carefully, in particular:
+
+- Byte/word order for `u32`/`s32` registers (PV power, AC power, battery power, energy totals)
+- The exact location and effect of the EMS control registers (`50xxx`/`52xxx` block) before enabling [EMS write access](#ems-write-access-controlling-the-inverterbattery)
+
+Dyness battery cell-level detail beyond min/max cell voltage (16 individual cell voltages per module) is **not** available over Modbus at the inverter - only min/max cell voltage and their cell IDs are exposed there. Full per-cell detail requires the separate Dyness Cloud API/MQTT (`ems.dyness.com` Developer Center), which this adapter does not implement.
+
+## Installation
+
+Once this adapter is listed in the official ioBroker adapter repository, install it the normal way: **Admin -> Adapters -> search for "solintec" -> install**.
+
+Until then, an ioBroker administrator can add it manually on the ioBroker host:
+
+```
+iobroker url iobroker.solintec
+```
+
+## Configuration
+
+| Tab | Setting | Description |
+| --- | --- | --- |
+| Connection | Host / IP address | IP or hostname of the inverter (or Modbus TCP/RTU gateway) |
+| Connection | Port | Modbus TCP port, usually 502 |
+| Connection | Unit ID | Modbus slave/unit ID, usually 1 |
+| Connection | Request timeout | Timeout per Modbus request, in seconds |
+| Polling | Fast poll interval | How often power/flow values (PV, grid, battery) are read (default 5s) |
+| Polling | Slow poll interval | How often energy counters and diagnostics are read (default 30s) |
+| EMS control | Enable EMS write access | Off by default - see [EMS write access](#ems-write-access-controlling-the-inverterbattery) |
+
+## Object/state structure
+
+```
+solintec.0.info.connection                 Inverter reachable (bool)
+solintec.0.info.lastSuccess                Timestamp of the last successful poll
+solintec.0.info.lastError                  Last error message
+
+solintec.0.info.serialNumber / .firmwareVersion
+solintec.0.diag.inverterStatus / .faultFlags1-3 / .radiatorTemperature
+
+solintec.0.pv.string1-4.voltage / .current / .power
+solintec.0.pv.totalPower
+
+solintec.0.grid.acPower / .frequency
+solintec.0.grid.voltageL1-3 / .currentL1-3
+
+solintec.0.meter.power / .powerL1-3
+solintec.0.meter.gridImportTotal / .gridExportTotal
+
+solintec.0.battery.voltage / .current / .power / .soc / .soh / .temperature
+solintec.0.battery.minCellVoltage / .maxCellVoltage (+ their cell IDs)
+solintec.0.battery.chargeLimit / .dischargeLimit
+solintec.0.battery.chargeToday / .chargeTotal / .dischargeToday / .dischargeTotal
+solintec.0.battery.manufacturer / .ratedCapacity
+
+solintec.0.energy.pvGenerationToday / .pvGenerationTotal
+solintec.0.energy.houseConsumptionToday / .houseConsumptionTotal
+
+solintec.0.ems.*                           EMS control registers, see below
+```
+
+All PV/grid/meter/battery power-flow states are polled at the fast interval; energy counters, diagnostics and EMS registers are polled at the slow interval.
+
+## EMS write access (controlling the inverter/battery)
+
+The `ems.*` states (working mode, charge/discharge power target, import/export limits, battery SOC protection limits, ...) are always **read**, so you can see the inverter's current EMS configuration regardless of this setting. **Writing** to them is disabled by default: any attempted write is logged and ignored until "Enable EMS write access" is turned on in the instance configuration.
+
+Only enable this if you actively want to control the inverter/battery (e.g. schedule charge/discharge power, cap grid export). Getting a register or scaling wrong here can put the inverter into an unintended operating mode - see [Register source and limitations](#register-source-and-limitations-please-read).
+
+## Polling and efficient reads
+
+[`lib/blocks.js`](lib/blocks.js) merges adjacent (or near-adjacent, small-gap) registers into as few `readHoldingRegisters()` calls as possible per poll cycle, instead of one Modbus request per register. Fast-group and slow-group registers are blocked independently and polled on their own interval.
+
+## Security & privacy
+
+- The adapter performs Modbus TCP against a device on your local network - no cloud account, no external API, no credentials to store.
+- EMS write access (the only functionality that can change the inverter's behavior) is disabled by default and must be explicitly enabled.
+- Written values are range-checked against each register's documented min/max before being sent.
+
+## Development
+
+```
+npm install
+npm run lint
+npm test          # unit tests (lib/registers.js, lib/modbusClient.js, lib/blocks.js) + package consistency check
+```
+
+Recommended additionally before every release:
+
+```
+npx @iobroker/repochecker@latest .
+```
+
+Pull requests are welcome, especially to verify/correct register addresses against real hardware, or to improve translations (currently English/German are complete; the other 9 languages use English text as a placeholder).
+
+## Changelog
+
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+
+### 0.1.0 (2026-08-15)
+
+- Initial release: reads PV, grid/meter and battery values from a Solinteg MHT-25~50K-100 hybrid inverter (Dyness STACK100 battery via CAN/RS485) over local Modbus TCP. Optional EMS write access is disabled by default.
+
+## License
+
+MIT License
+
+Copyright (c) 2026 Stefan Bühler
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
