@@ -10,6 +10,7 @@
     "requestTimeout": "Request timeout (s)",
     "requestTimeoutHelp": "Timeout for a single Modbus request, in seconds.",
     "pollingTab": "Polling",
+    "hintPollingText": "Two independent poll loops run in parallel: the fast loop reads power/flow values (PV, grid, battery), the slow loop reads energy counters and diagnostics. Shorter intervals give more responsive data but put more load on the inverter's Modbus interface.",
     "fastPollInterval": "Fast poll interval (s)",
     "fastPollIntervalHelp": "How often power/flow values (PV, grid, battery) are read.",
     "slowPollInterval": "Slow poll interval (s)",

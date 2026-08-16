@@ -6,17 +6,19 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.solintec.svg)](https://www.npmjs.com/package/iobroker.solintec)
 ![Test and Release](https://github.com/bueste/ioBroker.solintec/actions/workflows/test-and-release.yml/badge.svg)
 
-Reads PV, grid/meter and battery data from a **Solinteg MHT-25~50K-100** hybrid inverter (25-50 kW, three-phase) with a **Dyness STACK100** battery (51.2 kWh, connected to the inverter via CAN/RS485) over **local Modbus TCP**. No cloud account, no internet access required.
+Reads PV, grid/meter and battery data from **Solinteg hybrid inverters** with any attached battery, over **local Modbus TCP**. No cloud account, no internet access required.
 
 ## Table of contents
 
 - [Why this adapter?](#why-this-adapter)
+- [Compatibility](#compatibility)
 - [Register source and limitations (please read)](#register-source-and-limitations-please-read)
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Object/state structure](#objectstate-structure)
 - [EMS write access (controlling the inverter/battery)](#ems-write-access-controlling-the-inverterbattery)
 - [Polling and efficient reads](#polling-and-efficient-reads)
+- [Troubleshooting / FAQ](#troubleshooting--faq)
 - [Security & privacy](#security--privacy)
 - [Development](#development)
 - [Changelog](#changelog)
@@ -25,6 +27,17 @@ Reads PV, grid/meter and battery data from a **Solinteg MHT-25~50K-100** hybrid 
 ## Why this adapter?
 
 There is no generic "Solinteg" support in ioBroker. The Solinteg WR speaks openly documented Modbus TCP, so it could in principle be read out with the generic `ioBroker.modbus` adapter and a manually entered register list - but that means re-entering 50+ registers by hand in the admin UI, with no code-level control over scaling, data types or object structure. This adapter instead talks Modbus TCP directly (via `modbus-serial`), the same way [ioBroker.zeptrion](https://github.com/bueste/ioBroker.zeptrion), [ioBroker.goodwe-sems](https://github.com/bueste/ioBroker.goodwe-sems) and [ioBroker.husqvarna-automower-connect](https://github.com/bueste/ioBroker.husqvarna-automower-connect) each talk directly to their respective device/cloud API, giving full control over register mapping, scaling and the resulting object tree - plus the option to actively control the inverter/battery (EMS write access, off by default).
+
+## Compatibility
+
+This adapter targets Solinteg's **INTEG-M Modbus register family**, shared across:
+
+- Solinteg MHT series hybrid inverters (developed and tested against **MHT-25~50K-100**, 25-50 kW three-phase)
+- Rebrands of the same hardware/register family: **Wattsonic** and **M-TEC Energy Butler** inverters (per the reference implementation below - not independently confirmed by this adapter's author)
+
+Battery support is generic: the adapter reads whatever battery data the inverter itself reports over Modbus (SOC/SOH/voltage/current/power, min/max cell voltage), regardless of battery brand - it does not talk to the battery directly. Tested/developed against a **Dyness STACK100** (51.2 kWh, connected to the inverter via CAN/RS485), but any battery supported by the inverter should work the same way.
+
+If your device uses the same register family but isn't listed here, please open an issue or PR - the goal is to cover the whole Solinteg/INTEG-M ecosystem, not just one specific inverter+battery combination.
 
 ## Register source and limitations (please read)
 
@@ -101,6 +114,23 @@ Only enable this if you actively want to control the inverter/battery (e.g. sche
 ## Polling and efficient reads
 
 [`lib/blocks.js`](lib/blocks.js) merges adjacent (or near-adjacent, small-gap) registers into as few `readHoldingRegisters()` calls as possible per poll cycle, instead of one Modbus request per register. Fast-group and slow-group registers are blocked independently and polled on their own interval.
+
+## Troubleshooting / FAQ
+
+**`info.connection` stays `false` / no states update.**
+Check host/port/unit ID in the instance configuration, and that nothing (firewall, VLAN separation) blocks TCP port 502 between the ioBroker host and the inverter. Check `info.lastError` for the actual error message and the adapter log (Instance -> Expert mode -> Log level `debug`) for the underlying Modbus error.
+
+**How do I find my inverter's IP address?**
+Check your router's/DHCP server's client list for the inverter (often shows up by MAC vendor prefix or a Solinteg-related hostname), or check the inverter's own display/WiFi setup app if it has one.
+
+**Values look wildly wrong (huge numbers, negative where positive expected, etc.).**
+Most likely a `u32`/`s32` byte-order or scaling mismatch for that specific register - see [Register source and limitations](#register-source-and-limitations-please-read). Please open a GitHub issue with the raw value from `info.rawResponse`-style debugging (enable debug logging) or the actual vs. expected value, so the register map can be corrected.
+
+**Can I use this with a Wattsonic or M-TEC Energy Butler inverter?**
+In theory yes, per [Compatibility](#compatibility) - these share the same INTEG-M register family. This hasn't been independently confirmed by the adapter author against that hardware; feedback (positive or negative) via a GitHub issue is very welcome.
+
+**Nothing happens when I write to an `ems.*` state.**
+EMS write access is disabled by default - see [EMS write access](#ems-write-access-controlling-the-inverterbattery). Check the log for a warning confirming the write was ignored.
 
 ## Security & privacy
 

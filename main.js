@@ -124,10 +124,16 @@ class Solintec extends utils.Adapter {
         }
 
         for (const def of registers) {
+            let objectType = "number";
+            if (def.type === "str") {
+                objectType = "string";
+            } else if (def.type === "bool") {
+                objectType = "boolean";
+            }
             const common = {
                 name: def.name,
                 role: def.role || "value",
-                type: def.type === "str" ? "string" : "number",
+                type: objectType,
                 read: true,
                 write: def.write === true,
             };

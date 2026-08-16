@@ -37,6 +37,16 @@ describe("ModbusClient decode/encode", () => {
         expect(ModbusClient.decode([2], "map")).to.equal(2);
     });
 
+    it("decodes bool (0/1) as false/true", () => {
+        expect(ModbusClient.decode([0], "bool")).to.equal(false);
+        expect(ModbusClient.decode([1], "bool")).to.equal(true);
+    });
+
+    it("encodes bool (false/true) as 0/1", () => {
+        expect(ModbusClient.encode(false, "bool")).to.deep.equal([0]);
+        expect(ModbusClient.encode(true, "bool")).to.deep.equal([1]);
+    });
+
     it("round-trips u16 encode/decode", () => {
         const words = ModbusClient.encode(4321, "u16");
         expect(ModbusClient.decode(words, "u16")).to.equal(4321);

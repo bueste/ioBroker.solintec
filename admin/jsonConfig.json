@@ -56,6 +56,7 @@
                     "type": "number",
                     "label": "requestTimeout",
                     "help": "requestTimeoutHelp",
+                    "unit": "s",
                     "min": 1,
                     "max": 60,
                     "newLine": true,
@@ -71,10 +72,21 @@
             "type": "panel",
             "label": "pollingTab",
             "items": {
+                "_hintPolling": {
+                    "type": "staticText",
+                    "text": "hintPollingText",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
                 "fastPollInterval": {
                     "type": "number",
                     "label": "fastPollInterval",
                     "help": "fastPollIntervalHelp",
+                    "unit": "s",
                     "min": 3,
                     "max": 300,
                     "newLine": true,
@@ -88,6 +100,7 @@
                     "type": "number",
                     "label": "slowPollInterval",
                     "help": "slowPollIntervalHelp",
+                    "unit": "s",
                     "min": 5,
                     "max": 3600,
                     "xs": 12,

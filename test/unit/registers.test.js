@@ -4,8 +4,29 @@ const { expect } = require("chai");
 const { registers, registersById } = require("../../lib/registers");
 const { ModbusClient } = require("../../lib/modbusClient");
 
-const VALID_TYPES = new Set(["u16", "s16", "u32", "s32", "str", "map"]);
+const VALID_TYPES = new Set(["u16", "s16", "u32", "s32", "str", "map", "bool"]);
 const VALID_GROUPS = new Set(["fast", "slow"]);
+
+// Roles actually used in registers.js, each checked against the official ioBroker
+// state-roles reference (https://github.com/ioBroker/ioBroker.docs, "State roles"):
+// role -> required common.write value ("value.*" roles are read-only, "level"/"switch" are writable).
+const KNOWN_ROLES = {
+    value: false,
+    "value.voltage": false,
+    "value.current": false,
+    "value.power": false,
+    "value.energy": false,
+    "value.temperature": false,
+    "value.battery": false,
+    "value.frequency": false,
+    "info.serial": false,
+    "info.firmware": false,
+    "info.name": false,
+    level: true,
+    "level.battery": true,
+    "level.current": true,
+    switch: true,
+};
 
 describe("registers", () => {
     it("is a non-empty array", () => {
@@ -60,10 +81,35 @@ describe("registers", () => {
     });
 
     it("gives every writable numeric register a min/max range", () => {
-        for (const def of registers.filter((d) => d.write && d.type !== "map")) {
+        for (const def of registers.filter((d) => d.write && d.type !== "map" && d.type !== "bool")) {
             expect(def.min, `${def.id} missing min`).to.be.a("number");
             expect(def.max, `${def.id} missing max`).to.be.a("number");
             expect(def.min, def.id).to.be.lessThan(def.max);
+        }
+    });
+
+    it("uses only officially documented ioBroker state roles", () => {
+        for (const def of registers) {
+            expect(
+                Object.prototype.hasOwnProperty.call(KNOWN_ROLES, def.role),
+                `${def.id}: role "${def.role}" is not in the official ioBroker state-roles list`,
+            ).to.be.true;
+        }
+    });
+
+    it("only uses read-only ('value.*'/'info.*') roles on read-only registers, and vice versa", () => {
+        for (const def of registers) {
+            const roleRequiresWrite = KNOWN_ROLES[def.role];
+            expect(
+                Boolean(def.write),
+                `${def.id}: role "${def.role}" requires common.write=${roleRequiresWrite}, but write=${Boolean(def.write)}`,
+            ).to.equal(roleRequiresWrite);
+        }
+    });
+
+    it("only uses role 'switch' on boolean-typed registers", () => {
+        for (const def of registers.filter((d) => d.role === "switch")) {
+            expect(def.type, `${def.id}: role "switch" requires common.type=boolean`).to.equal("bool");
         }
     });
 

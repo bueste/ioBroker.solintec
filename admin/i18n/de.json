@@ -10,6 +10,7 @@
     "requestTimeout": "Timeout pro Anfrage (s)",
     "requestTimeoutHelp": "Timeout für eine einzelne Modbus-Anfrage, in Sekunden.",
     "pollingTab": "Abfrage-Intervalle",
+    "hintPollingText": "Zwei unabhängige Abfrage-Zyklen laufen parallel: der schnelle liest Leistungswerte (PV, Netz, Batterie), der langsame liest Energiezähler und Diagnosewerte. Kürzere Intervalle liefern aktuellere Daten, belasten aber die Modbus-Schnittstelle des Wechselrichters stärker.",
     "fastPollInterval": "Schnelles Poll-Intervall (s)",
     "fastPollIntervalHelp": "Wie oft Leistungswerte (PV, Netz, Batterie) gelesen werden.",
     "slowPollInterval": "Langsames Poll-Intervall (s)",

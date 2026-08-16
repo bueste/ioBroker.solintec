@@ -1,11 +1,11 @@
 {
     "name": "iobroker.solintec",
     "version": "0.1.0",
-    "description": "ioBroker adapter for Solinteg MHT-25~50K-100 hybrid inverters with Dyness STACK100 battery, via local Modbus TCP.",
+    "description": "ioBroker adapter for Solinteg hybrid inverters (MHT series and INTEG-M-compatible rebrands such as Wattsonic and M-TEC Energy Butler) with any attached battery (e.g. Dyness STACK100), via local Modbus TCP.",
     "author": "Stefan Bühler",
     "homepage": "https://github.com/bueste/ioBroker.solintec",
     "license": "MIT",
-    "keywords": ["ioBroker", "solinteg", "dyness", "stack100", "modbus", "inverter", "solar", "photovoltaik", "pv", "battery"],
+    "keywords": ["ioBroker", "solinteg", "wattsonic", "m-tec", "dyness", "stack100", "modbus", "hybrid", "inverter", "solar", "photovoltaik", "pv", "battery"],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/bueste/ioBroker.solintec.git"
