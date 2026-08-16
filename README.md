@@ -8,6 +8,10 @@
 
 Reads PV, grid/meter and battery data from **Solinteg hybrid inverters** with any attached battery, over **local Modbus TCP**. No cloud account, no internet access required.
 
+## Disclaimer
+
+Solinteg, Dyness, Wattsonic and M-TEC are trademarks of their respective holders. This is an independent, community-maintained adapter, not developed, endorsed or supported by any of them. The Solinteg logo above is used with permission.
+
 ## Table of contents
 
 - [Why this adapter?](#why-this-adapter)
